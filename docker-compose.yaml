@@ -1,0 +1,16 @@
+version: "3.8"
+services:
+  server_express:
+    container_name: server_express
+    build: .
+    restart: always
+  nginx:
+    container_name: nginx_login_time
+    image: nginx:1.19.6
+    ports:
+      - 8004:80
+    volumes:
+      - ./config/nginx/conf.d:/etc/nginx/conf.d
+    restart: always
+volumes:
+  .:
