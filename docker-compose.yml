@@ -1,0 +1,36 @@
+version: "3.8"
+services:
+  server_express:
+    container_name: login_express
+    build: .
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - "3000:3000"
+    networks:
+      login_network:
+        aliases:
+          - express_host
+  nginx:
+    container_name: nginx_login_time
+    image: nginx:1.19.6
+    ports:
+      - 8002:80
+    volumes:
+      - ./config/nginx/conf.d:/etc/nginx/conf.d
+    restart: always
+    networks:
+      login_network:
+        aliases:
+          - nginx_host
+volumes:
+  .:
+networks:
+  login_network:
+    name: login_net
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.29.0.0/27
