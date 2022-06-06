@@ -1,6 +1,10 @@
 import { Router } from "express";
 import { check } from "express-validator";
-import { registerLog, getLogs } from "../controllers/loginTime.controller";
+import {
+   registerLog,
+   getLogs,
+   getUserToApp,
+} from "../controllers/loginTime.controller";
 import { validarCampos } from "../middlewares/validar-campos";
 
 const router = new Router();
@@ -26,6 +30,12 @@ router.post(
       validarCampos,
    ],
    getLogs
+);
+
+router.post(
+   "/users_app",
+   [check("ruc", "Ruc es requerido").not().isEmpty(), validarCampos],
+   getUserToApp
 );
 
 export default router;

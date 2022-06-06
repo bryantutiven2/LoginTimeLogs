@@ -32,13 +32,31 @@ export const registerLog = async (req, res = response) => {
    }
 };
 
-export const getLogs = async (req, res = response) => {
-   const { start, end } = req.body;
+export const getUserToApp = async (req, res = response) => {
+   const { ruc } = req.body;
    try {
-      const timeStart = new Date(start);
-      const timeEnd = new Date(end);
+      const resp = await UserLoginTime.find({ ruc_app: ruc }, [
+         "user_name_app",
+         "user_email_app",
+         "user_id_app",
+      ]);
+      console.log(resp);
+      return res.json(resp);
+   } catch (error) {
+      return res.status(500).json({
+         msg: "Error en el servidor",
+      });
+   }
+};
 
-      const logs = await UserLoginTime.aggregate([
+export const getLogs = async (req, res = response) => {
+   const { user_id, start, end } = req.body;
+   try {
+      const timeStart = new Date(start * 1000);
+      const timeEnd = new Date(end * 1000);
+
+      const logsObject = await UserLoginTime.aggregate([
+         { $match: { user_id_app: user_id } },
          {
             $project: {
                logs: {
@@ -57,8 +75,14 @@ export const getLogs = async (req, res = response) => {
          },
       ]);
 
+      let times = [];
+      logsObject[0].logs.forEach((log) => {
+         const miliseconds = log.timeEnd - log.timeStart;
+         times.push(miliseconds);
+      });
+
       return res.json({
-         data: logs,
+         logs: times,
       });
    } catch (error) {
       return res.status(500).json({
