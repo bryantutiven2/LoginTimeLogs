@@ -40,7 +40,6 @@ export const getUserToApp = async (req, res = response) => {
          "user_email_app",
          "user_id_app",
       ]);
-      console.log(resp);
       return res.json(resp);
    } catch (error) {
       return res.status(500).json({
